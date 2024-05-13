@@ -1,0 +1,31 @@
+API
+
+POST /auth/register
+REQUEST BODY
+{
+    firstname*          string
+    lastname*           string
+    email*              string
+    password*           string
+    confirmPassword*    string
+}
+RESPONSE
+201 { user object }
+400 { message: 'client error' }
+500 { message: 'server error' }
+
+POST /auth/login
+REQUEST BODY
+{
+    email*              string
+    password*           string
+}
+RESPONSE
+201 { accessToken, user object }
+400 { message: 'client error' }
+500 { message: 'server error' }
+
+GET /homepage       All board
+RESPONSE
+201 { posts: [ {postId, username, image, groupName, topic, description, count_comment} ] }
+500 { message: 'server error'}
