@@ -12,11 +12,22 @@ export class CommentsService {
   }
 
   findAll() {
-    return this.prisma.comments.findMany();
+    return this.prisma.comments.findMany({
+      include: {
+        user: { select: { firstName: true, lastName: true, image: true } },
+      },
+    });
   }
 
   findOne(id: number) {
-    return this.prisma.comments.findUnique({ where: { id } });
+    return this.prisma.comments.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: { firstName: true, lastName: true, image: true },
+        },
+      },
+    });
   }
 
   update(id: number, updateCommentDto: UpdateCommentDto) {
