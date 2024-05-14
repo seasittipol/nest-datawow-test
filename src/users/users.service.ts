@@ -30,4 +30,8 @@ export class UsersService {
   findOneWithUsername(username: string) {
     return this.prisma.users.findUnique({ where: { username } });
   }
+
+  findOneWithEmail(email: string) {
+    return this.prisma.users.findUnique({ where: { email } });
+  }
 }

@@ -1,15 +1,36 @@
 import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from 'src/users/users.service';
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('register')
   async create(@Body() body: CreateUserDto) {
+    if (body.password.trim().length < 6) {
+      throw new UnauthorizedException({
+        message: 'password must be more than 6 character',
+      });
+    }
+    if (!/\S+@\S+\.\S+/.test(body.email)) {
+      throw new UnauthorizedException({ message: 'email not matched' });
+    }
+    const user = await this.usersService.findOneWithUsername(body.username);
+    if (user) {
+      throw new UnauthorizedException({ message: 'username already use' });
+    }
+    const email = await this.usersService.findOneWithEmail(body.email);
+    if (email) {
+      throw new UnauthorizedException({ message: 'email already use' });
+    }
+
     return this.authService.register(body);
   }
 
