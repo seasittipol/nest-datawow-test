@@ -12,11 +12,29 @@ export class PostsService {
   }
 
   findAll() {
-    return this.prisma.posts.findMany();
+    return this.prisma.posts.findMany({
+      include: {
+        user: { select: { firstName: true, lastName: true, image: true } },
+        _count: true,
+      },
+    });
   }
 
   findOne(id: number) {
-    return this.prisma.posts.findUnique({ where: { id } });
+    return this.prisma.posts.findUnique({
+      where: { id },
+      include: {
+        user: { select: { firstName: true, lastName: true, image: true } },
+        _count: true,
+        Comments: {
+          select: {
+            description: true,
+            updatedAt: true,
+            user: { select: { firstName: true, lastName: true, image: true } },
+          },
+        },
+      },
+    });
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {
