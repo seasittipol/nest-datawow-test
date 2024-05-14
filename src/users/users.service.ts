@@ -26,4 +26,8 @@ export class UsersService {
   remove(id: number) {
     return this.prisma.users.delete({ where: { id } });
   }
+
+  findOneWithUsername(username: string) {
+    return this.prisma.users.findUnique({ where: { username } });
+  }
 }
