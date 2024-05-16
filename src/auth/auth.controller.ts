@@ -1,7 +1,15 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
+import { RequestWithUser } from 'src/types/type';
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -11,6 +19,11 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
   ) {}
+
+  @Get('me')
+  async getMe(@Req() req: RequestWithUser) {
+    return { user: req.user };
+  }
 
   @Post('register')
   async create(@Body() body: CreateUserDto) {
@@ -30,7 +43,7 @@ export class AuthController {
     if (email) {
       throw new UnauthorizedException({ message: 'email already use' });
     }
-
+    body.password = await bcrypt.hash(body.password, 10);
     return this.authService.register(body);
   }
 
